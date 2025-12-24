@@ -1,0 +1,33 @@
+vat:
+  ROI: 0.23
+  NI: 0.20
+
+margin_pct:
+  SME: 0.05
+  IC: 0.03
+
+risk_pct:
+  SME: 0.02
+  IC: 0.015
+
+sanity:
+  min_unit_rate_eur_per_kwh:
+    SME: 0.10
+    IC: 0.07
+  max_unit_rate_eur_per_kwh:
+    SME: 0.60
+    IC: 0.40
+  network_change_warn_threshold_pct: 0.20
+
+file_paths:
+  wholesale:
+    ELEC:
+      ROI: "sample_data/wholesale_elec_roi_2026.csv"
+      NI: "sample_data/wholesale_elec_ni_2026.csv"
+    GAS:
+      ROI: "sample_data/wholesale_gas_roi_2026.csv"
+      NI: "sample_data/wholesale_gas_ni_2026.csv"
+  shaping_adders: "sample_data/shaping_adders.csv"
+  losses: "sample_data/losses.csv"
+  pass_through: "sample_data/pass_through_charges.csv"
+  customer_archetypes: "sample_data/customer_archetypes.csv"

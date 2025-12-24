@@ -1,0 +1,6 @@
+archetype_id,name,market,commodity,segment,tariff_structure,annual_consumption_kwh,standing_charge_eur_per_year,flat_share,day_share,night_share,peak_share,offpeak_share
+SME_ELEC_FLAT_ROI,SME Flat 24/7 Elec ROI,ROI,ELEC,SME,flat,30000,250,1,0,0,0,0
+SME_ELEC_DN_ROI,SME Day/Night Elec ROI,ROI,ELEC,SME,daynight,50000,300,0,0.6,0.4,0,0
+IC_ELEC_POFF_ROI,IC Peak/Offpeak Elec ROI,ROI,ELEC,IC,peakoffpeak,500000,1000,0,0,0,0.65,0.35
+SME_GAS_FLAT_ROI,SME Gas Flat ROI,ROI,GAS,SME,flat,60000,200,1,0,0,0,0
+SME_ELEC_FLAT_NI,SME Flat 24/7 Elec NI,NI,ELEC,SME,flat,30000,250,1,0,0,0,0

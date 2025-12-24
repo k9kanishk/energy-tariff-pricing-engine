@@ -1,0 +1,6 @@
+year,market,commodity,band,price_eur_per_mwh
+2026,ROI,GAS,FLAT,40
+2026,ROI,GAS,DAY,42
+2026,ROI,GAS,NIGHT,38
+2026,ROI,GAS,PEAK,45
+2026,ROI,GAS,OFFPEAK,39

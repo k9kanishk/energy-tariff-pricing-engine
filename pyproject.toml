@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "esb-tariff-engine"
+version = "0.1.0"
+description = "ROI + NI All-In Tariff Builder with Pass-Through Charge Updater"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.26",
+  "pydantic>=1.10",
+  "PyYAML>=6.0",
+  "openpyxl>=3.1",
+  "xlsxwriter>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+pricing-engine = "pricing_engine.__main__:main"

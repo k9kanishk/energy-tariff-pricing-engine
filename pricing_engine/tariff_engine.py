@@ -31,7 +31,7 @@ from .schemas import (
     TimeBand,
 )
 
-from pricing_engine.market_data import get_archetype_by_id
+from .market_data import get_archetype_by_id
 
 def build_tariff_from_archetype_id(
     self,

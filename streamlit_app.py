@@ -7,12 +7,25 @@ from pricing_engine.tariff_engine import TariffEngine
 DATA_ROOT = Path(__file__).parent / "sample_data"
 
 @st.cache_data
-def load_archetypes():
+def archetypes_df():
     df = pd.read_csv(DATA_ROOT / "customer_archetypes.csv")
-    for c in ["archetype_id","name","market","commodity","segment","tariff_structure"]:
-        if c in df.columns:
-            df[c] = df[c].astype(str).str.strip()
+    for c in ["market","commodity","segment","tariff_structure","archetype_id","name"]:
+        df[c] = df[c].astype(str).str.strip()
     return df
+
+df = archetypes_df()
+
+market = st.selectbox("Market", sorted(df["market"].unique()))
+commodity = st.selectbox("Commodity", sorted(df[df["market"]==market]["commodity"].unique()))
+segment = st.selectbox("Segment", sorted(df[(df["market"]==market)&(df["commodity"]==commodity)]["segment"].unique()))
+
+valid_tariffs = sorted(df[
+    (df["market"]==market) &
+    (df["commodity"]==commodity) &
+    (df["segment"]==segment)
+]["tariff_structure"].unique())
+
+tariff_structure = st.selectbox("Tariff structure", valid_tariffs)
 
 def main():
     st.title("ROI + NI All-In Tariff Builder")

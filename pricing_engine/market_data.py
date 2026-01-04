@@ -15,6 +15,16 @@ from .schemas import (
     TimeBand,
 )
 
+def get_archetype_by_id(settings, data_root: Path, archetype_id: str):
+    df = pd.read_csv(data_root / "customer_archetypes.csv")
+    df["archetype_id"] = df["archetype_id"].astype(str).str.strip()
+
+    sub = df[df["archetype_id"] == archetype_id]
+    if sub.empty:
+        raise ValueError(f"No archetype found for archetype_id={archetype_id}. Check customer_archetypes.csv")
+    row = sub.iloc[0]
+    return row  # or convert to your Archetype pydantic model as you already do
+
 
 def _read_csv(path: Path) -> pd.DataFrame:
     if not path.exists():

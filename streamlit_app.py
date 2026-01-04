@@ -30,7 +30,7 @@ tariff_structure = st.selectbox("Tariff structure", valid_tariffs)
 def main():
     st.title("ROI + NI All-In Tariff Builder")
 
-    df = load_archetypes()
+    df = archetypes_df()
 
     archetype_id = st.selectbox(
         "Customer Archetype",

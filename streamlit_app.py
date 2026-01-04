@@ -50,7 +50,11 @@ def main():
     contract_type = st.selectbox("Contract type", ["fixed", "indexed"], index=0)
     include_vat = st.checkbox("Include VAT", value=True)
 
-    engine = TariffEngine(data_root=DATA_ROOT)
+    CONFIG_PATH = Path(__file__).parent / "config" / "base.yaml"
+    DATA_ROOT = Path(__file__).parent  # repo root
+
+    engine = TariffEngine.from_config(config_path=CONFIG_PATH, data_root=DATA_ROOT)
+
 
     if st.button("Run Pricing"):
         result = engine.build_tariff_from_archetype(

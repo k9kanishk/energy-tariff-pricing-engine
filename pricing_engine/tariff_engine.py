@@ -31,6 +31,18 @@ from .schemas import (
     TimeBand,
 )
 
+from pricing_engine.market_data import get_archetype_by_id
+
+def build_tariff_from_archetype_id(
+    self,
+    archetype_id: str,
+    year: int,
+    contract_type: ContractType,
+    include_vat: bool = True,
+) -> TariffResult:
+    archetype = get_archetype_by_id(self.settings, self.data_root, archetype_id)
+    return self._build_tariff(archetype, year=year, contract_type=contract_type, include_vat=include_vat)
+
 
 @dataclass
 class TariffEngine:

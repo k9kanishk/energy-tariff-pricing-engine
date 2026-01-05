@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 
@@ -14,6 +14,12 @@ class PassThroughSelection:
     network_eur_per_mwh: float
     levies_eur_per_mwh: float
     raw_rows: pd.DataFrame
+
+
+@dataclass
+class NonEnergyCharges:
+    fixed_eur_per_year: float = 0.0  # e.g., €/cust/month → €/year
+    capacity_eur_per_year: float = 0.0  # e.g., €/kVA/month * MIC * 12
 
 
 class PassThroughLibrary:
@@ -55,6 +61,61 @@ class PassThroughLibrary:
             levies_eur_per_mwh=float(levies),
             raw_rows=subset,
         )
+
+    def select_non_energy(
+        self,
+        region: Market,
+        commodity: Commodity,
+        segment: Segment,
+        year: int,
+        as_of: date,
+        mic_kva: Optional[float] = None,
+    ) -> NonEnergyCharges:
+        df = self.df
+
+        # basic filters
+        mask = (
+            (df["region"] == region.value)
+            & (df["commodity"] == commodity.value)
+            & (df["segment"] == segment.value)
+            & (df["year"] == year)
+        )
+        sub = df[mask].copy()
+
+        # effective date filter
+        sub["effective_from"] = sub["effective_from"].astype(str)
+        sub["effective_to"] = sub["effective_to"].astype(str)
+
+        # keep rows where as_of is inside [from, to]
+        sub = sub[
+            (pd.to_datetime(sub["effective_from"]) <= pd.Timestamp(as_of))
+            & (pd.to_datetime(sub["effective_to"]) >= pd.Timestamp(as_of))
+        ]
+
+        fixed = 0.0
+        cap = 0.0
+        mic = float(mic_kva) if mic_kva is not None else 0.0
+
+        for _, r in sub.iterrows():
+            unit = str(r["unit"]).strip().upper()
+            val = float(r["value"])
+
+            # We treat NON-energy levy/network charges here (do NOT put into €/MWh waterfall)
+            if unit == "EUR_PER_CUST_PER_MONTH":
+                fixed += val * 12.0
+            elif unit == "EUR_PER_YEAR" or unit == "EUR_PER_CUST_PER_YEAR":
+                fixed += val
+            elif unit == "EUR_PER_KVA_PER_MONTH":
+                if mic <= 0:
+                    # no MIC provided, skip but you can also raise/warn
+                    continue
+                cap += val * mic * 12.0
+            elif unit == "EUR_PER_KVA_PER_YEAR":
+                if mic <= 0:
+                    continue
+                cap += val * mic
+
+        return NonEnergyCharges(fixed_eur_per_year=fixed, capacity_eur_per_year=cap)
 
     def find_overlaps(self) -> List[str]:
         """Detect overlapping effective date ranges for same charge key."""

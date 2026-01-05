@@ -104,6 +104,7 @@ class CustomerArchetype(BaseModel):
     annual_consumption_kwh: float
     standing_charge_eur_per_year: float
     band_split: Dict[TimeBand, float]
+    mic_kva: Optional[float] = None
 
     @validator("band_split")
     def band_split_must_sum_to_one(cls, v: Dict[TimeBand, float]) -> Dict[TimeBand, float]:
@@ -124,6 +125,7 @@ class TariffRequest(BaseModel):
     standing_charge_eur_per_year: float
     band_split: Dict[TimeBand, float]
     vat_rate: Optional[float] = None
+    mic_kva: Optional[float] = None
 
 
 class TariffComponent(BaseModel):
@@ -174,3 +176,5 @@ class TariffResult(BaseModel):
     estimated_annual_bill_ex_vat: float
     estimated_annual_bill_inc_vat: float
     indexed_info: Optional[IndexedTariffInfo] = None  # populated for indexed products
+    pass_through_fixed_eur_per_year: float = 0.0
+    pass_through_capacity_eur_per_year: float = 0.0

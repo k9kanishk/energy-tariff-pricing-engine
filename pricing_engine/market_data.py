@@ -19,7 +19,6 @@ import pandas as pd
 from pathlib import Path
 
 from .schemas import Market, Commodity, Segment, TariffStructure
-from .market_data import get_archetype  # if you're inside same file, just call get_archetype directly
 
 def get_archetype_by_id(settings, data_root: Path, archetype_id: str):
     df = pd.read_csv(data_root / "sample_data" / "customer_archetypes.csv")

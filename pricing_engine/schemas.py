@@ -126,6 +126,7 @@ class TariffRequest(BaseModel):
     band_split: Dict[TimeBand, float]
     vat_rate: Optional[float] = None
     mic_kva: Optional[float] = None
+    enforce_sanity: bool = True
 
 
 class TariffComponent(BaseModel):

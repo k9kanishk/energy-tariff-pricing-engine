@@ -158,7 +158,22 @@ def main():
         df_bill = pd.DataFrame(bill_rows).sort_values("Band")
         st.dataframe(df_bill, use_container_width=True)
 
-        bill_ex_vat_calc = energy_cost_total + standing
+        st.subheader("Non-energy Pass-through Charges")
+        st.write(
+            "Fixed pass-through (€/year): "
+            f"€{result.pass_through_fixed_eur_per_year:,.2f}"
+        )
+        st.write(
+            "Capacity pass-through (€/year): "
+            f"€{result.pass_through_capacity_eur_per_year:,.2f}"
+        )
+
+        bill_ex_vat_calc = (
+            energy_cost_total
+            + standing
+            + result.pass_through_fixed_eur_per_year
+            + result.pass_through_capacity_eur_per_year
+        )
         bill_inc_vat_calc = bill_ex_vat_calc * (1.0 + vat_rate)
 
         b1, b2, b3 = st.columns(3)

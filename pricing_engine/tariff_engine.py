@@ -79,6 +79,7 @@ class TariffEngine:
             standing_charge_eur_per_year=archetype.standing_charge_eur_per_year,
             band_split=archetype.band_split,
             vat_rate=vat_rate,
+            mic_kva=archetype.mic_kva,
         )
         return self.build_tariff(request)
 
@@ -98,6 +99,18 @@ class TariffEngine:
         losses_df = load_losses(self.settings, self.data_root, market, commodity, segment, year)
         pass_df = load_pass_through(self.settings, self.data_root, market, commodity, segment, year)
         pass_lib = PassThroughLibrary(pass_df)
+
+        # Optional MIC (only matters for IC / capacity-based charges)
+        mic_kva = getattr(request, "mic_kva", None)
+
+        non_energy = pass_lib.select_non_energy(
+            region=market,
+            commodity=commodity,
+            segment=segment,
+            year=year,
+            as_of=date(year, 6, 30),
+            mic_kva=mic_kva,
+        )
 
         margin_pct = float(self.settings.margin_pct[segment.value])
         risk_pct = float(self.settings.risk_pct[segment.value])
@@ -181,7 +194,12 @@ class TariffEngine:
         standing = request.standing_charge_eur_per_year
 
         annual_energy_cost = weighted_all_in_eur_per_kwh * annual_kwh
-        annual_bill_ex_vat = annual_energy_cost + standing
+        annual_bill_ex_vat = (
+            annual_energy_cost
+            + standing
+            + non_energy.fixed_eur_per_year
+            + non_energy.capacity_eur_per_year
+        )
 
         vat_rate = request.vat_rate if request.vat_rate is not None else 0.0
         annual_bill_inc_vat = annual_bill_ex_vat * (1.0 + vat_rate)
@@ -211,6 +229,8 @@ class TariffEngine:
             estimated_annual_bill_ex_vat=annual_bill_ex_vat,
             estimated_annual_bill_inc_vat=annual_bill_inc_vat,
             indexed_info=indexed_info,
+            pass_through_fixed_eur_per_year=non_energy.fixed_eur_per_year,
+            pass_through_capacity_eur_per_year=non_energy.capacity_eur_per_year,
         )
 
         # Run sanity checks (raises if outside range)

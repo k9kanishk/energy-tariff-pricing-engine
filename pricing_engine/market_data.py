@@ -153,6 +153,10 @@ def get_archetype(
     if row["offpeak_share"]:
         band_split[TimeBand.OFFPEAK] = float(row["offpeak_share"])
 
+    mic_kva = None
+    if "mic_kva" in row.index and not pd.isna(row["mic_kva"]):
+        mic_kva = float(row["mic_kva"])
+
     return CustomerArchetype(
         archetype_id=row["archetype_id"],
         name=row["name"],
@@ -163,4 +167,5 @@ def get_archetype(
         annual_consumption_kwh=float(row["annual_consumption_kwh"]),
         standing_charge_eur_per_year=float(row["standing_charge_eur_per_year"]),
         band_split=band_split,
+        mic_kva=mic_kva,
     )

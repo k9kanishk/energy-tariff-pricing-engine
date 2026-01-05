@@ -53,26 +53,22 @@ class TariffEngine:
     def from_config(cls, config_path: str | Path = "config/base.yaml", data_root: str | Path = "."):
         return cls(settings=load_settings(config_path), data_root=Path(data_root))
 
-    def build_tariff_from_archetype(
+        def build_tariff_from_archetype_id(
         self,
-        market: Market,
-        commodity: Commodity,
-        segment: Segment,
-        tariff_structure: TariffStructure,
+        archetype_id: str,
         year: int,
         contract_type: ContractType,
         include_vat: bool = True,
     ) -> TariffResult:
-        archetype = get_archetype(
-            self.settings, self.data_root, market, commodity, segment, tariff_structure
-        )
-        vat_rate = self.settings.vat[market.value] if include_vat else 0.0
+        archetype = get_archetype_by_id(self.settings, self.data_root, archetype_id)
+
+        vat_rate = self.settings.vat[archetype.market.value] if include_vat else 0.0
 
         request = TariffRequest(
-            market=market,
-            commodity=commodity,
-            segment=segment,
-            tariff_structure=tariff_structure,
+            market=archetype.market,
+            commodity=archetype.commodity,
+            segment=archetype.segment,
+            tariff_structure=archetype.tariff_structure,
             year=year,
             contract_type=contract_type,
             annual_consumption_kwh=archetype.annual_consumption_kwh,
@@ -81,6 +77,7 @@ class TariffEngine:
             vat_rate=vat_rate,
         )
         return self.build_tariff(request)
+
 
     def build_tariff(self, request: TariffRequest) -> TariffResult:
         market = request.market

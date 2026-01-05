@@ -16,7 +16,7 @@ from .schemas import (
 )
 
 def get_archetype_by_id(settings, data_root: Path, archetype_id: str):
-    df = pd.read_csv(data_root / "customer_archetypes.csv")
+    df = pd.read_csv(data_root / "sample_data" / "customer_archetypes.csv")
     df["archetype_id"] = df["archetype_id"].astype(str).str.strip()
 
     sub = df[df["archetype_id"] == archetype_id]

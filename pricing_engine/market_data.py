@@ -15,15 +15,39 @@ from .schemas import (
     TimeBand,
 )
 
-def get_archetype_by_id(settings, data_root: Path, archetype_id: str):
+from .schemas import Archetype, Market, Commodity, Segment, TariffStructure  # Archetype is in schemas.py
+
+def get_archetype_by_id(settings, data_root: Path, archetype_id: str) -> Archetype:
     df = pd.read_csv(data_root / "sample_data" / "customer_archetypes.csv")
     df["archetype_id"] = df["archetype_id"].astype(str).str.strip()
 
     sub = df[df["archetype_id"] == archetype_id]
     if sub.empty:
-        raise ValueError(f"No archetype found for archetype_id={archetype_id}. Check customer_archetypes.csv")
+        raise ValueError(f"No archetype found for archetype_id={archetype_id}")
+
     row = sub.iloc[0]
-    return row  # or convert to your Archetype pydantic model as you already do
+
+    # Build band split from the CSV columns (adjust if your column names differ)
+    band_split = {
+        "FLAT": float(row.get("flat_share", 0.0) or 0.0),
+        "DAY": float(row.get("day_share", 0.0) or 0.0),
+        "NIGHT": float(row.get("night_share", 0.0) or 0.0),
+        "PEAK": float(row.get("peak_share", 0.0) or 0.0),
+        "OFFPEAK": float(row.get("offpeak_share", 0.0) or 0.0),
+    }
+
+    return Archetype(
+        archetype_id=str(row["archetype_id"]),
+        name=str(row["name"]),
+        market=Market(str(row["market"]).strip()),
+        commodity=Commodity(str(row["commodity"]).strip()),
+        segment=Segment(str(row["segment"]).strip()),
+        tariff_structure=TariffStructure(str(row["tariff_structure"]).strip()),
+        annual_consumption_kwh=float(row["annual_consumption_kwh"]),
+        standing_charge_eur_per_year=float(row["standing_charge_eur_per_year"]),
+        band_split=band_split,
+    )
+
 
 
 def _read_csv(path: Path) -> pd.DataFrame:

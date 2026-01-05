@@ -12,11 +12,19 @@ risk_pct:
 
 sanity:
   min_unit_rate_eur_per_kwh:
-    SME: 0.10
-    IC: 0.07
+    SME:
+      ELEC: 0.10
+      GAS: 0.03
+    IC:
+      ELEC: 0.07
+      GAS: 0.02
   max_unit_rate_eur_per_kwh:
-    SME: 0.60
-    IC: 0.40
+    SME:
+      ELEC: 0.60
+      GAS: 0.20
+    IC:
+      ELEC: 0.40
+      GAS: 0.15
   network_change_warn_threshold_pct: 0.20
 
 file_paths:

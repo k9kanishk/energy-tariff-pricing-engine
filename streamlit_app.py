@@ -39,13 +39,18 @@ def main():
     enforce_sanity = st.checkbox("Enforce sanity bounds", value=True)
 
     if st.button("Run Pricing"):
-        result = engine.build_tariff_from_archetype_id(
-            archetype_id=archetype_id,
-            year=int(year),
-            contract_type=ContractType(contract_type),
-            include_vat=include_vat,
-            enforce_sanity=enforce_sanity,
-        )
+        try:
+            result = engine.build_tariff_from_archetype_id(
+                archetype_id=archetype_id,
+                year=int(year),
+                contract_type=ContractType(contract_type),
+                include_vat=include_vat,
+                enforce_sanity=enforce_sanity,
+            )
+        except ValueError as exc:
+            st.error(str(exc))
+            st.info("Tip: uncheck 'Enforce sanity bounds' to inspect the tariff components.")
+            return
 
         # ---------- Quote Summary (Tender Output) ----------
         st.header("Quote Summary (Tender Output)")

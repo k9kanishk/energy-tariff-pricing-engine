@@ -88,8 +88,8 @@ class TariffEngine:
             band_split=archetype.band_split,
             vat_rate=vat_rate,
             mic_kva=archetype.mic_kva,
+            enforce_sanity=enforce_sanity,
         )
-        request.enforce_sanity = enforce_sanity
         return self.build_tariff(request)
 
     def build_tariff_from_archetype(
@@ -126,8 +126,8 @@ class TariffEngine:
             band_split=archetype.band_split,
             vat_rate=vat_rate,
             mic_kva=archetype.mic_kva,
+            enforce_sanity=enforce_sanity,
         )
-        request.enforce_sanity = enforce_sanity
         return self.build_tariff(request)
 
     def build_tariff(self, request: TariffRequest) -> TariffResult:
@@ -279,7 +279,7 @@ class TariffEngine:
             pass_through_capacity_eur_per_year=non_energy.capacity_eur_per_year,
         )
 
-        if getattr(request, "enforce_sanity", True):
+        if request.enforce_sanity:
             # Run sanity checks (raises if outside range)
             sanity_cfg = self.settings.sanity
             assert_tariff_bounds(

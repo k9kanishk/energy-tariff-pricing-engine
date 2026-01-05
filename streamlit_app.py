@@ -36,6 +36,7 @@ def main():
     year = st.number_input("Year", min_value=2020, max_value=2035, value=2026, step=1)
     contract_type = st.selectbox("Contract type", ["fixed", "indexed"], index=0)
     include_vat = st.checkbox("Include VAT", value=True)
+    enforce_sanity = st.checkbox("Enforce sanity bounds", value=True)
 
     if st.button("Run Pricing"):
         result = engine.build_tariff_from_archetype_id(
@@ -43,6 +44,7 @@ def main():
             year=int(year),
             contract_type=ContractType(contract_type),
             include_vat=include_vat,
+            enforce_sanity=enforce_sanity,
         )
 
         # ---------- Quote Summary (Tender Output) ----------

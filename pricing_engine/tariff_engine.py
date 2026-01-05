@@ -39,9 +39,16 @@ def build_tariff_from_archetype_id(
     year: int,
     contract_type: ContractType,
     include_vat: bool = True,
+    enforce_sanity: bool = True,
 ) -> TariffResult:
     archetype = get_archetype_by_id(self.settings, self.data_root, archetype_id)
-    return self._build_tariff(archetype, year=year, contract_type=contract_type, include_vat=include_vat)
+    return self._build_tariff(
+        archetype,
+        year=year,
+        contract_type=contract_type,
+        include_vat=include_vat,
+        enforce_sanity=enforce_sanity,
+    )
 
 
 @dataclass
@@ -63,6 +70,7 @@ class TariffEngine:
         year: int,
         contract_type: ContractType,
         include_vat: bool = True,
+        enforce_sanity: bool = True,
     ) -> TariffResult:
         archetype = get_archetype_by_id(self.settings, self.data_root, archetype_id)
 
@@ -81,8 +89,46 @@ class TariffEngine:
             vat_rate=vat_rate,
             mic_kva=archetype.mic_kva,
         )
+        request.enforce_sanity = enforce_sanity
         return self.build_tariff(request)
 
+    def build_tariff_from_archetype(
+        self,
+        market: Market,
+        commodity: Commodity,
+        segment: Segment,
+        tariff_structure: TariffStructure,
+        year: int,
+        contract_type: ContractType,
+        include_vat: bool = True,
+        enforce_sanity: bool = True,
+    ) -> TariffResult:
+        archetype = get_archetype(
+            self.settings,
+            self.data_root,
+            market=market,
+            commodity=commodity,
+            segment=segment,
+            tariff_structure=tariff_structure,
+        )
+
+        vat_rate = self.settings.vat[archetype.market.value] if include_vat else 0.0
+
+        request = TariffRequest(
+            market=archetype.market,
+            commodity=archetype.commodity,
+            segment=archetype.segment,
+            tariff_structure=archetype.tariff_structure,
+            year=year,
+            contract_type=contract_type,
+            annual_consumption_kwh=archetype.annual_consumption_kwh,
+            standing_charge_eur_per_year=archetype.standing_charge_eur_per_year,
+            band_split=archetype.band_split,
+            vat_rate=vat_rate,
+            mic_kva=archetype.mic_kva,
+        )
+        request.enforce_sanity = enforce_sanity
+        return self.build_tariff(request)
 
     def build_tariff(self, request: TariffRequest) -> TariffResult:
         market = request.market
@@ -233,12 +279,13 @@ class TariffEngine:
             pass_through_capacity_eur_per_year=non_energy.capacity_eur_per_year,
         )
 
-        # Run sanity checks (raises if outside range)
-        sanity_cfg = self.settings.sanity
-        assert_tariff_bounds(
-            result,
-            min_bounds=sanity_cfg["min_unit_rate_eur_per_kwh"],
-            max_bounds=sanity_cfg["max_unit_rate_eur_per_kwh"],
-        )
+        if getattr(request, "enforce_sanity", True):
+            # Run sanity checks (raises if outside range)
+            sanity_cfg = self.settings.sanity
+            assert_tariff_bounds(
+                result,
+                min_bounds=sanity_cfg["min_unit_rate_eur_per_kwh"],
+                max_bounds=sanity_cfg["max_unit_rate_eur_per_kwh"],
+            )
 
         return result

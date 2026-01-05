@@ -19,6 +19,6 @@ NI,ELEC,SME,NIGHT,NETWORK,SONI TUoS Supplier Tariff ST04 (All other times),EUR_M
 NI,ELEC,SME,OFFPEAK,NETWORK,SONI TUoS Supplier Tariff ST04 (All other times),EUR_MWH,2.3943177912704776,GBP,0.209,p/kWh,2025-10-01,2026-09-30,1,SONI TUoS,11,Mapped to OFFPEAK for peak/offpeak product.
 NI,ELEC,SME,ALL,LEVY,SONI System Support Services (SSS) charge,EUR_MWH,32.374842479092685,GBP,2.826,p/kWh,2025-10-01,2026-09-30,1,SONI TUoS,23,Applies per unit sold (p/kWh).
 NI,ELEC,SME,ALL,LEVY,SONI CAIRt adjustment (negative),EUR_MWH,-1.0425020048115479,GBP,-0.091,p/kWh,2025-10-01,2026-09-30,1,SONI TUoS,18,Negative adjustment returned to suppliers/customers.
-ROI,GAS,SME,FLAT,NETWORK,GNI Distribution (Dx) commodity charge (<=73 MWh),EUR_MWH,2172.625,EUR,217.2625,c/kWh,2025-10-01,2026-09-30,1,GNI Distribution Tariffs (Dx),0,Category <=73 MWh per year (fits SME archetype ~60 MWh).
+ROI,GAS,SME,FLAT,NETWORK,GNI Distribution (Dx) commodity charge (<=73 MWh),EUR_MWH,21.72625,EUR,2.172625,c/kWh,2025-10-01,2026-09-30,1,GNI Distribution Tariffs (Dx),0,Category <=73 MWh per year (fits SME archetype ~60 MWh).
 ROI,GAS,SME,FLAT,NETWORK,GNI Transmission (Tx) exit commodity charge,EUR_MWH,0.353005,EUR,0.353005,EUR/MWh,2025-10-01,2026-09-30,1,GNI Transmission Tariffs (Tx),0,Exit commodity charge (capacity ignored in MVP).
 NI,GAS,SME,FLAT,NETWORK,"firmus conveyance commodity (P1 <= 2,500 therms)",EUR_MWH,23.14125329361897,GBP,2.02,p/kWh,2026-01-01,2026-12-31,1,firmus conveyance statement 2026,1,Mapped to SME gas archetype. Uses FX from uploaded FX.pdf (GBP per EUR).

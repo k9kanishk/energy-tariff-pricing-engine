@@ -15,9 +15,13 @@ from .schemas import (
     TimeBand,
 )
 
-from .schemas import Archetype, Market, Commodity, Segment, TariffStructure  # Archetype is in schemas.py
+import pandas as pd
+from pathlib import Path
 
-def get_archetype_by_id(settings, data_root: Path, archetype_id: str) -> Archetype:
+from .schemas import Market, Commodity, Segment, TariffStructure
+from .market_data import get_archetype  # if you're inside same file, just call get_archetype directly
+
+def get_archetype_by_id(settings, data_root: Path, archetype_id: str):
     df = pd.read_csv(data_root / "sample_data" / "customer_archetypes.csv")
     df["archetype_id"] = df["archetype_id"].astype(str).str.strip()
 
@@ -27,26 +31,15 @@ def get_archetype_by_id(settings, data_root: Path, archetype_id: str) -> Archety
 
     row = sub.iloc[0]
 
-    # Build band split from the CSV columns (adjust if your column names differ)
-    band_split = {
-        "FLAT": float(row.get("flat_share", 0.0) or 0.0),
-        "DAY": float(row.get("day_share", 0.0) or 0.0),
-        "NIGHT": float(row.get("night_share", 0.0) or 0.0),
-        "PEAK": float(row.get("peak_share", 0.0) or 0.0),
-        "OFFPEAK": float(row.get("offpeak_share", 0.0) or 0.0),
-    }
+    # Convert strings -> enums
+    market = Market(str(row["market"]).strip())
+    commodity = Commodity(str(row["commodity"]).strip())
+    segment = Segment(str(row["segment"]).strip())
+    tariff_structure = TariffStructure(str(row["tariff_structure"]).strip())
 
-    return Archetype(
-        archetype_id=str(row["archetype_id"]),
-        name=str(row["name"]),
-        market=Market(str(row["market"]).strip()),
-        commodity=Commodity(str(row["commodity"]).strip()),
-        segment=Segment(str(row["segment"]).strip()),
-        tariff_structure=TariffStructure(str(row["tariff_structure"]).strip()),
-        annual_consumption_kwh=float(row["annual_consumption_kwh"]),
-        standing_charge_eur_per_year=float(row["standing_charge_eur_per_year"]),
-        band_split=band_split,
-    )
+    # Reuse the existing function that already builds the correct Archetype object
+    return get_archetype(settings, data_root, market, commodity, segment, tariff_structure)
+
 
 
 

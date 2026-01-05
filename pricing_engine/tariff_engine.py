@@ -50,10 +50,14 @@ class TariffEngine:
     data_root: Path
 
     @classmethod
-    def from_config(cls, config_path: str | Path = "config/base.yaml", data_root: str | Path = "."):
+    def from_config(
+        cls,
+        config_path: str | Path = "config/base.yaml",
+        data_root: str | Path = ".",
+    ):
         return cls(settings=load_settings(config_path), data_root=Path(data_root))
 
-        def build_tariff_from_archetype_id(
+    def build_tariff_from_archetype_id(
         self,
         archetype_id: str,
         year: int,

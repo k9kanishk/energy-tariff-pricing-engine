@@ -7,12 +7,13 @@ from .schemas import TariffResult
 
 def check_tariff_bounds(
     tariff_result: TariffResult,
-    min_bounds: Dict[str, float],
-    max_bounds: Dict[str, float],
+    min_bounds: Dict[str, Dict[str, float]],
+    max_bounds: Dict[str, Dict[str, float]],
 ) -> List[str]:
     seg = tariff_result.request.segment.value
-    min_rate = float(min_bounds[seg])
-    max_rate = float(max_bounds[seg])
+    com = tariff_result.request.commodity.value
+    min_rate = float(min_bounds[seg][com])
+    max_rate = float(max_bounds[seg][com])
 
     warnings: List[str] = []
     for comp in tariff_result.components:
@@ -31,8 +32,8 @@ def check_tariff_bounds(
 
 def assert_tariff_bounds(
     tariff_result: TariffResult,
-    min_bounds: Dict[str, float],
-    max_bounds: Dict[str, float],
+    min_bounds: Dict[str, Dict[str, float]],
+    max_bounds: Dict[str, Dict[str, float]],
 ) -> None:
     warnings = check_tariff_bounds(tariff_result, min_bounds, max_bounds)
     if warnings:

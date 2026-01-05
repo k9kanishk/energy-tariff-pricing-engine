@@ -29,6 +29,6 @@ file_paths:
       NI: "sample_data/wholesale_gas_ni_2026.csv"
   shaping_adders: "sample_data/shaping_adders.csv"
   losses: "sample_data/losses.csv"
-  pass_through: "sample_data/pass_through_charges_engine_2026 (1).csv"
-  customer_archetypes: "sample_data/customer_archetypes_enhanced_real (1).csv"
+  pass_through: "sample_data/pass_through_charges.csv"
+  customer_archetypes: "sample_data/customer_archetypes.csv"
   fx_rates: "sample_data/fx_rates_tariff_year_2025_26.csv"

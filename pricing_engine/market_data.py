@@ -30,14 +30,14 @@ def get_archetype_by_id(settings, data_root: Path, archetype_id: str):
 
     row = sub.iloc[0]
 
-    # Convert strings -> enums
     market = Market(str(row["market"]).strip())
     commodity = Commodity(str(row["commodity"]).strip())
     segment = Segment(str(row["segment"]).strip())
     tariff_structure = TariffStructure(str(row["tariff_structure"]).strip())
 
-    # Reuse the existing function that already builds the correct Archetype object
+    # IMPORTANT: call get_archetype directly (no import)
     return get_archetype(settings, data_root, market, commodity, segment, tariff_structure)
+
 
 
 

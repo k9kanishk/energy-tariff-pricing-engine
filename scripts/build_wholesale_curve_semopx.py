@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-
 import pandas as pd
 
 
@@ -18,9 +17,7 @@ def parse_semopx_csv(path: Path) -> pd.DataFrame:
     out = df[["Date", "Time", "EUR"]].copy()
     out.columns = ["date", "time", "price_eur_per_mwh"]
 
-    out["datetime"] = pd.to_datetime(
-        out["date"].astype(str) + " " + out["time"].astype(str), errors="coerce"
-    )
+    out["datetime"] = pd.to_datetime(out["date"].astype(str) + " " + out["time"].astype(str), errors="coerce")
     out["price_eur_per_mwh"] = pd.to_numeric(out["price_eur_per_mwh"], errors="coerce")
 
     out = out.dropna(subset=["datetime", "price_eur_per_mwh"])
@@ -55,7 +52,7 @@ def band_averages(df: pd.DataFrame) -> dict[str, float]:
     return res
 
 
-def main() -> None:
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", required=True)
     ap.add_argument("--market", required=True, choices=["ROI", "NI"])
@@ -69,26 +66,14 @@ def main() -> None:
         raise SystemExit(f"No CSVs found in {input_dir}")
 
     frames = [parse_semopx_csv(f) for f in files]
-    df = (
-        pd.concat(frames, ignore_index=True)
-        .drop_duplicates(subset=["datetime"])
-        .sort_values("datetime")
-    )
+    df = pd.concat(frames, ignore_index=True).drop_duplicates(subset=["datetime"]).sort_values("datetime")
     df = add_bands(df)
 
     avgs = band_averages(df)
 
     out_df = pd.DataFrame(
-        [
-            {
-                "year": args.year,
-                "market": args.market,
-                "commodity": "ELEC",
-                "band": k,
-                "price_eur_per_mwh": v,
-            }
-            for k, v in avgs.items()
-        ]
+        [{"year": args.year, "market": args.market, "commodity": "ELEC", "band": k, "price_eur_per_mwh": v}
+         for k, v in avgs.items()]
     )
 
     out_path = Path(args.out)
